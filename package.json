@@ -9,8 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@conform-to/react": "^1.1.5",
+    "@conform-to/zod": "^1.1.5",
+    "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-menubar": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.1",
+    "@supabase/ssr": "^0.4.0",
+    "@supabase/supabase-js": "^2.44.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.406.0",
@@ -18,8 +26,11 @@
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-dom": "^18",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",

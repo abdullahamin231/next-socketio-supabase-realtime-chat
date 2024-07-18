@@ -1,34 +1,40 @@
-const express = require('express');
-const next = require('next');
-const axios = require('axios');
+import { createServer } from "node:http";
+import next from "next";
+import { Server } from "socket.io";
 
-const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
-const handle = app.getRequestHandler();
+const dev = process.env.NODE_ENV !== "production";
+const hostname = "localhost";
+const port = process.env.PORT || 3000;
+// when using middleware `hostname` and `port` must be provided below
+const app = next({ dev, hostname, port });
+const handler = app.getRequestHandler();
 
-const http = require('http');
-const socketIO = require('socket.io');
+app.prepare().then(() => {
+  const httpServer = createServer(handler);
 
-app.prepare().then(async () => {
-    const server = express();
-    const httpServer = http.createServer(server);
-    const io = socketIO(httpServer);
+  const io = new Server(httpServer);
 
-    io.on('connection', (socket) => {
-        console.log('Client connected');
+  io.on("connection", (socket) => {
+    console.log("a user connected with id: ", socket.id);
 
-        socket.on('message1', (data) => {
-            console.log('Recieved from API ::', data)
-            io.emit('message2', data);
-        })
+    // socket.on -> io.emit
+    socket.on('message', (message) => {
+      console.log(message, "by", socket.id);
+      io.emit("response", message);
     });
 
-    server.all('*', (req, res) => {
-        return handle(req, res);
+    socket.on("disconnect", () => {
+      console.log("user disconnected with id: ", socket.id);
     });
+  });
 
-    const PORT = process.env.PORT || 3000;
-    httpServer.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
+
+  httpServer
+    .once("error", (err) => {
+      console.error(err);
+      process.exit(1);
+    })
+    .listen(port, () => {
+      console.log(`> Ready on http://${hostname}:${port}`);
     });
 });

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ModeToggle } from "./theme-toggle";
 import SignOutButton from "./_signout-button/signout-button";
+import TestPage from "./Test";
 
 export default async function Home() {
   const supabase = createClient();
@@ -27,6 +28,7 @@ export default async function Home() {
         <ModeToggle />
         <SignOutButton />
       </div>
+      <TestPage />
     </main>
   );
 }

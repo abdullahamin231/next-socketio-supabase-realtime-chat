@@ -17,7 +17,6 @@ export function EditProfile({ full_name }: { full_name: string }) {
     <Dialog>
       <DialogTrigger asChild>
         <Avatar className="h-10 w-10 border cursor-pointer">
-          <AvatarImage src="/placeholder-user.jpg" />
           <AvatarFallback>
             {`${full_name.split(" ")[0][0]}${full_name.split(" ")[1][0]}`}
           </AvatarFallback>
@@ -27,7 +26,7 @@ export function EditProfile({ full_name }: { full_name: string }) {
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Make changes to your profile here. Click save when you&apos;t re done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

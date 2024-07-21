@@ -61,7 +61,7 @@ export const MessageBox = ({ contact }: { contact: Contact }) => {
       <ScrollArea className="flex-1">
         <div className="grid gap-4 p-4 sm:p-6">
           {messages.map((message, i) => (
-            <MessageItem messageText={message} rightSide={false} />
+            <MessageItem key={i} messageText={message} rightSide={false} />
           ))}
         </div>
       </ScrollArea>

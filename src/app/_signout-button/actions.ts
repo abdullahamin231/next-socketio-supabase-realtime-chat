@@ -11,6 +11,6 @@ export async function signOut() {
     };
   }
   return {
-    error: "",
+    error: "You have been signed out successfully.",
   };
 }

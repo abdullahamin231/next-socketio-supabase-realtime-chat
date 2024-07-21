@@ -1,4 +1,5 @@
 "use client";
+
 import { socket } from "../socket";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SendIcon, EllipsisVertical } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Contact } from "./ContactComponents";
+import { createClient } from "@/utils/supabase/client";
 
-export const MessageBox = () => {
+export const MessageBox = ({ contact }: { contact: Contact }) => {
+  const supabase = createClient();
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState("");
 
@@ -27,18 +31,23 @@ export const MessageBox = () => {
     socket.emit("message", message);
   };
 
+  // useEffect(() => {
+  //   const fetchContactMessages = async () => {
+	// 		// const messages = await supabase.from("messages").select("*").eq("contact_id", contact.id);
+	// 	};
+  // }, [contact]);
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="border-b border-muted p-4 sm:p-6">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border">
-            <AvatarImage src="/placeholder-user.jpg" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{contact.fallback}</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-sm font-medium">John Doe</p>
+            <p className="text-sm font-medium">{contact.name}</p>
             <p className="text-xs text-muted-foreground">
-              Last seen 2 hours ago
+              Last seen {contact.lastSeen} ago
             </p>
           </div>
           <div className="ml-auto flex items-center gap-2">

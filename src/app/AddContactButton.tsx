@@ -55,10 +55,10 @@ export default function AddContactButton() {
               }
               className="col-span-3"
             />
-            <Button type="submit" size="sm" className="px-3">
+            <button  type="submit" className="px-3 h-9 rounded-md hover:bg-muted">
               <span className="sr-only">Search</span>
               <Search className="h-4 w-4" />
-            </Button>
+            </button>
           </div>
         </div>
       </DialogContent>

@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { Contact, ContactButton, ContactList } from "./ContactComponents";
 import { MessageBox } from "./MessageComponents";
+import Image from "next/image";
+import NoContactSelectedImage from "@/assets/no-contact-selected.svg";
 
 export default function Body() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const handleContactClick = (contact: Contact) => {
     setSelectedContact(contact);
-  }
+  };
 
   const dummyContacts = [
     {
@@ -34,8 +36,25 @@ export default function Body() {
           <ContactList onClick={handleContactClick} contacts={dummyContacts} />
         </div>
       </div>
-      <MessageBox />
+      {selectedContact ? (
+        <MessageBox contact={selectedContact} />
+      ) : (
+        <div className="flex-1 flex flex-col items-center justify-center overflow-hidden">
+          <div className="flex flex-col items-center w-full">
+            <Image
+              className="max-w-60"
+              src={NoContactSelectedImage}
+              alt="No Contact Selected"
+            />
+            <p className="text-2xl mt-2 font-bold tracking-tight">
+              You have no contact selected
+            </p>
+            <p className="text-sm mt-2 text-muted-foreground">
+              Select a contact to start chatting
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

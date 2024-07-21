@@ -38,7 +38,6 @@ export const ContactItem = ({
       className="flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer"
     >
       <Avatar className="h-10 w-10 border">
-        <AvatarImage src="/placeholder-user.jpg" />
         <AvatarFallback>{fallback}</AvatarFallback>
       </Avatar>
       <div className="flex-1 truncate">

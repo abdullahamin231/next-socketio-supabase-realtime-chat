@@ -8,11 +8,8 @@ import { parseWithZod } from "@conform-to/zod";
 import { useFormState, useFormStatus } from "react-dom";
 import { signup } from "@/app/signup/actions";
 import { signupSchema } from "@/app/signup/schema";
-import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function Form() {
-  const { toast } = useToast();
   const [lastResult, action] = useFormState(signup, undefined);
   const [form, fields] = useForm({
     // Sync the result of last submission
@@ -29,14 +26,6 @@ export default function Form() {
     shouldRevalidate: "onInput",
   });
 
-  useEffect(() => {
-    if (lastResult?.status === "error") {
-      toast({
-        // @ts-ignore
-        title: lastResult.message!,
-      });
-    }
-  }, [lastResult]);
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action} noValidate>

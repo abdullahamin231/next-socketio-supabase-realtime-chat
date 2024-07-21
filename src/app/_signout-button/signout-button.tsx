@@ -4,6 +4,7 @@ import { signOut } from "./actions";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { LogOutIcon } from "lucide-react";
 
 const SignOutButton = () => {
   const { toast } = useToast();
@@ -27,8 +28,14 @@ const SignOutButton = () => {
           title: message!.error,
         });
       }}
+      variant="ghost"
+      size="icon"
     >
-      {loading ? "Signing out..." : "Sign out"}
+      <LogOutIcon className="h-6 w-6" />
+      <span className="sr-only">
+        {" "}
+        {loading ? "Signing out..." : "Sign out"}
+      </span>
     </Button>
   );
 };

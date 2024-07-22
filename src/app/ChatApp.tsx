@@ -78,7 +78,7 @@ export default function ChatApp({ user: userData }: { user: User }) {
           />
         ) : (
           <div className={"grid gap-2 min-w-44"}>
-            <ContactButton />
+            <ContactButton userId={userData.id} />
             <ContactList
               loading={loading}
               onClick={handleContactClick}

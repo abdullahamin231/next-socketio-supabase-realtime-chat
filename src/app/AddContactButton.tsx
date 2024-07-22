@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { getAllUsers, sendRequest } from "./actions";
+import { getAllUsers } from "./actions";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 interface Option {
@@ -22,7 +22,7 @@ interface Option {
   last_seen: string;
 }
 
-export default function AddContactButton() {
+export default function AddContactButton({ userId }: { userId: string }) {
   const [searchBy, setSearchBy] = useState<"name" | "email">("email");
   // hydration error fix
   const [isClient, setIsClient] = useState(false);
@@ -91,31 +91,33 @@ export default function AddContactButton() {
             </button>
           </div>
         </div>
-      <div className="border-t-2 py-2">
-      {options.length > 0 && (
-        <ScrollArea>
-          {options.map((option: Option) => (
-            <OptionItem option={option} />
-          ))}
-        </ScrollArea>
-      )}
-      </div>
+        <div className="border-t-2 py-2">
+          {options.length > 0 && (
+            <ScrollArea className="space-y-2 h-44">
+              {options.map((option: Option) => (
+                <OptionItem option={option} userId={userId} />
+              ))}
+            </ScrollArea>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-const OptionItem = ({ option }: { option: Option }) => {
+const OptionItem = ({ option, userId }: { option: Option; userId: string }) => {
   const [sent, setSent] = useState(false);
   return (
     <div className="flex items-center justify-between">
       <p>{option.full_name}</p>
-      <Button 
-      disabled={sent}
-      onClick={() => {
-        sendRequest(option.id);
-        setSent(true);
-      }}>{sent ? "Request Sent!" : "Send Request"}</Button>
+      <Button
+        disabled={sent}
+        onClick={() => {
+          setSent(true);
+        }}
+      >
+        {sent ? "Request Sent!" : "Send Request"}
+      </Button>
     </div>
   );
 };

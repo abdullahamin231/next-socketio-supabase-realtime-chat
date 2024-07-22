@@ -5,16 +5,20 @@ import { createClient } from "@/utils/supabase/client";
 export const supabase = createClient();
 
 export const getAllUsers = async (searchBy: string, searchInput: string) => {
-  if(searchBy === "email") {
+  if (searchBy === "email") {
     return [];
-  } else if (searchBy === "name"){
-    const {data, error} = await supabase.from("user_info").select("*").ilike("full_name", `%${searchInput}%`);
-    if(error) {
+  } else if (searchBy === "name") {
+    const { data, error } = await supabase
+      .from("user_info")
+      .select("*")
+      .ilike("full_name", `%${searchInput}%`);
+    if (error) {
       console.error(error);
     }
     return data;
   }
-}
+};
+
 
 export const sendMessageUseCase = async (
   conversationId: string,
@@ -51,11 +55,7 @@ export const fetchMessagesUseCase = async (conversationId: string) => {
   }
 };
 
-export const sendRequest = (request_id: string) => {
-  return;
-}
-
-const checkConversation = async (
+const fetchConversationUseCase = async (
   contact: Contact,
   userData: User
 ): Promise<string | undefined> => {
@@ -114,7 +114,7 @@ export const fetchContacts = async (
     }));
 
     const promisedConversationIds = contacts.map(async (contact: Contact) => {
-      const id = await checkConversation(contact, userData);
+      const id = await fetchConversationUseCase(contact, userData);
       return { ...contact, conversationId: id };
     });
 

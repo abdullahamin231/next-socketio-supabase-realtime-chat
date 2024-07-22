@@ -26,11 +26,11 @@ export interface CompleteContact extends Contact {
   conversationId: string | undefined;
 }
 
-export const ContactButton = () => {
+export const ContactButton = ({ userId }: { userId: string }) => {
   return (
     <div className="mb-2 flex items-center justify-between">
       <h2 className="text-lg font-medium">Contacts</h2>
-      <AddContactButton />
+      {/* <AddContactButton userId={userId} /> */}
     </div>
   );
 };
@@ -101,7 +101,9 @@ export const ContactListDrawer = ({
 }: ContactListProps) => {
   return (
     <Drawer>
-      <DrawerTrigger className="flex items-center space-x-2 font-semibold px-4 py-2"><BookUser/>  Contacts</DrawerTrigger>
+      <DrawerTrigger className="flex items-center space-x-2 font-semibold px-4 py-2">
+        <BookUser /> Contacts
+      </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Your Contacts.</DrawerTitle>

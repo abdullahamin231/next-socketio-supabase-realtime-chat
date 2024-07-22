@@ -98,7 +98,7 @@ export const MessageBox = ({
     return () => {
       socket.off("response", handleResponse);
     };
-  }, [userData.id]);
+  }, [userData.id, conversationId]);
 
   const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();

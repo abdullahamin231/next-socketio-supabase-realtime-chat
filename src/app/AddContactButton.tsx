@@ -94,8 +94,8 @@ export default function AddContactButton() {
       <div className="border-t-2 py-2">
       {options.length > 0 && (
         <ScrollArea>
-          {options.map((option: Option) => (
-            <OptionItem option={option} />
+          {options.map((option: Option, i) => (
+            <OptionItem key={i} option={option} />
           ))}
         </ScrollArea>
       )}

@@ -1,13 +1,11 @@
 "use client";
 import { PlusIcon, Search } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -18,6 +16,15 @@ import { Switch } from "@/components/ui/switch";
 
 export default function AddContactButton() {
   const [searchBy, setSearchBy] = useState<"name" | "email">("email");
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // or a loading placeholder
+  }
 
   return (
     <Dialog>
@@ -55,7 +62,7 @@ export default function AddContactButton() {
               }
               className="col-span-3"
             />
-            <button  type="submit" className="px-3 h-9 rounded-md hover:bg-muted">
+            <button type="submit" className="px-3 h-9 rounded-md hover:bg-muted">
               <span className="sr-only">Search</span>
               <Search className="h-4 w-4" />
             </button>

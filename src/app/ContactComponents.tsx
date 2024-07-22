@@ -1,13 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddContactButton from "./AddContactButton";
+import { Skeleton } from "@/components/ui/skeleton"
 
 
 export interface Contact {
+  id: string;
   fallback: string;
   name: string;
   latestMessage: string;
   lastSeen: string;
+}
+
+export interface CompleteContact extends Contact {
+  conversationId: string | undefined;
 }
 
 export const ContactButton = () => {
@@ -23,6 +29,7 @@ export const ContactButton = () => {
 
 interface ContactItemProps extends Contact {
   onClick: () => void;
+  classNames?: string;
 }
 
 export const ContactItem = ({
@@ -31,11 +38,12 @@ export const ContactItem = ({
   latestMessage,
   lastSeen,
   onClick,
+  classNames,
 }: ContactItemProps) => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer"
+      className={`flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer ${classNames}`}
     >
       <Avatar className="h-10 w-10 border">
         <AvatarFallback>{fallback}</AvatarFallback>
@@ -50,16 +58,36 @@ export const ContactItem = ({
 };
 
 interface ContactListProps {
-  contacts: Contact[];
-  onClick: (contact: Contact) => void;
+  contacts: CompleteContact[];
+  onClick: (contact: CompleteContact) => void;
+  loading: boolean;
+  selectedContact: Contact | null;
 }
 
-export const ContactList = ({ contacts, onClick }: ContactListProps) => {
+export const ContactList = ({ contacts, onClick, loading, selectedContact }: ContactListProps) => {
+  if(loading){
+    return <ContactsSkeleton />
+  }
   return (
     <ScrollArea className="h-96">
       {contacts.map((contact, i) => (
-        <ContactItem key={i} {...contact} onClick={() => onClick(contact)} />
+        <ContactItem classNames={selectedContact?.id === contact.id ? "bg-muted":""} key={i} {...contact} onClick={() => onClick(contact)} />
       ))}
     </ScrollArea>
   );
 };
+
+
+export function ContactsSkeleton() {
+  return (
+    <div
+      className="flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer"
+    >
+      <Skeleton className="h-10 w-10 border rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[150px]" />
+        <Skeleton className="h-4 w-[100px]" />
+      </div>
+    </div>
+  )
+}

@@ -8,6 +8,8 @@ import { parseWithZod } from "@conform-to/zod";
 import { useFormState, useFormStatus } from "react-dom";
 import { signup } from "@/app/signup/actions";
 import { signupSchema } from "@/app/signup/schema";
+import { useState } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 export default function Form() {
   const [lastResult, action] = useFormState(signup, undefined);
@@ -25,7 +27,7 @@ export default function Form() {
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
   });
-
+  const [isTextVisible, setIsTextVisible] = useState("text");
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action} noValidate>
@@ -69,13 +71,18 @@ export default function Form() {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            key={fields.password.key}
-            name={fields.password.name}
-            // @ts-ignore
-            defaultValue={fields.password.initialValue}
-          />
+          <div className="flex items-center space-x-2">
+            <Input
+              type={isTextVisible}
+              key={fields.password.key}
+              name={fields.password.name}
+              // @ts-ignore
+              defaultValue={fields.password.initialValue}
+            />
+            <Button type="button" onClick={() => setIsTextVisible(isTextVisible === "text" ? "password" : "text")}>
+              {isTextVisible === "text" ? <EyeIcon /> : <EyeOffIcon />}
+            </Button>
+          </div>
           <div className="text-xs text-red-400">{fields.password.errors}</div>
         </div>
         <SubmitButton />

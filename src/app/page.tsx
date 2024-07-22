@@ -4,23 +4,21 @@ import { ModeToggle } from "./theme-toggle";
 import SignOutButton from "./_signout-button/signout-button";
 import Link from "next/link";
 import { MessagesSquare } from "lucide-react";
-import ChatApp from "./Body";
+import ChatApp from "./ChatApp";
 import ConnectedDisplay from "./ConnectedDisplay";
 import { EditProfile } from "./EditProfile";
 
 export default async function Home() {
   const supabase = createClient();
 
-  // const { data, error } = await supabase.auth.getUser();
-  // if (error || !data?.user) {
-  //   redirect("/login");
-  // }
-  // const { data: full_name } = await supabase
-  //   .from("user_info")
-  //   .select("full_name")
-  //   .eq("id", data.user.id);
-
-  const full_name = [{ full_name: "John Doe" }];
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    redirect("/login");
+  }
+  const { data: full_name } = await supabase
+    .from("user_info")
+    .select("full_name")
+    .eq("id", data.user.id);
 
   return (
     <main className="flex flex-col h-screen overflow-hidden">
@@ -33,12 +31,12 @@ export default async function Home() {
         </div>
         <div className="flex items-center gap-4">
           <ConnectedDisplay />
-          <EditProfile full_name={full_name[0].full_name} />
+          <EditProfile full_name={full_name![0].full_name} />
           <ModeToggle />
           <SignOutButton />
         </div>
       </header>
-      <ChatApp />
+      <ChatApp user={data.user} />
     </main>
   );
 }

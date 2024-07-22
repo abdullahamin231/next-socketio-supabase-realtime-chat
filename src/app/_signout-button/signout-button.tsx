@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { LogOutIcon } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import { ToastAction } from "@radix-ui/react-toast";
 
 const SignOutButton = () => {
   const { toast } = useToast();
@@ -14,7 +16,7 @@ const SignOutButton = () => {
     setLoading(true);
     const response = await signOut();
     setLoading(false);
-    if (response.error === "") {
+    if (response.message === "You have been signed out successfully.") {
       router.push("/login");
     }
     return response;
@@ -23,9 +25,12 @@ const SignOutButton = () => {
   return (
     <Button
       onClick={async () => {
+        toast({
+          title: "Signing out...",
+        })
         const message = await handleSignOut();
         toast({
-          title: message!.error,
+          title: message!.message,
         });
       }}
       variant="ghost"

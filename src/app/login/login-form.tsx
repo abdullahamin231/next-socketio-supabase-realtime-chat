@@ -9,9 +9,13 @@ import { parseWithZod } from "@conform-to/zod";
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "@/app/login/actions";
 import { loginSchema } from "@/app/login/schema";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function LoginForm() {
-  const [lastResult, action] = useFormState(login, undefined);
+  const {toast} = useToast();
+  const [lastResult, action] = useFormState(login, {status: "", message: ""});
   const [form, fields] = useForm({
     // Sync the result of last submission
 
@@ -27,6 +31,16 @@ export default function LoginForm() {
     shouldValidate: "onBlur",
     shouldRevalidate: "onInput",
   });
+  const [isTextVisible, setIsTextVisible] = useState("password");
+
+  useEffect(() => {
+    if(lastResult?.status === "error"){
+      toast({
+        // @ts-ignore
+        title: lastResult?.message
+      })
+    }
+  })
 
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action} noValidate>
@@ -44,13 +58,18 @@ export default function LoginForm() {
         </div>
         <div className="grid gap-2">
           <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            key={fields.password.key}
-            name={fields.password.name}
-            // @ts-ignore
-            defaultValue={fields.password.initialValue}
-          />
+          <div className="flex items-center space-x-2">
+            <Input
+              type={isTextVisible}
+              key={fields.password.key}
+              name={fields.password.name}
+              // @ts-ignore
+              defaultValue={fields.password.initialValue}
+            />
+            <Button type="button" onClick={() => setIsTextVisible(isTextVisible === "text" ? "password" : "text")}>
+              {isTextVisible === "text" ? <EyeIcon /> : <EyeOffIcon />}
+            </Button>
+          </div>
           <div className="text-xs text-red-400">{fields.password.errors}</div>
         </div>
         <SubmitButton />

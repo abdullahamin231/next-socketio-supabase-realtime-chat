@@ -1,14 +1,24 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddContactButton from "./AddContactButton";
-import { Skeleton } from "@/components/ui/skeleton"
-
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { BookUser } from "lucide-react";
 
 export interface Contact {
   id: string;
   fallback: string;
   name: string;
-  latestMessage: string;
   lastSeen: string;
 }
 
@@ -25,8 +35,6 @@ export const ContactButton = () => {
   );
 };
 
-
-
 interface ContactItemProps extends Contact {
   onClick: () => void;
   classNames?: string;
@@ -35,7 +43,6 @@ interface ContactItemProps extends Contact {
 export const ContactItem = ({
   fallback,
   name,
-  latestMessage,
   lastSeen,
   onClick,
   classNames,
@@ -50,7 +57,6 @@ export const ContactItem = ({
       </Avatar>
       <div className="flex-1 truncate">
         <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{latestMessage}</p>
       </div>
       <div className="text-xs text-muted-foreground">{lastSeen}</div>
     </div>
@@ -64,30 +70,61 @@ interface ContactListProps {
   selectedContact: Contact | null;
 }
 
-export const ContactList = ({ contacts, onClick, loading, selectedContact }: ContactListProps) => {
-  if(loading){
-    return <ContactsSkeleton />
+export const ContactList = ({
+  contacts,
+  onClick,
+  loading,
+  selectedContact,
+}: ContactListProps) => {
+  if (loading) {
+    return <ContactsSkeleton />;
   }
   return (
     <ScrollArea className="h-96">
       {contacts.map((contact, i) => (
-        <ContactItem classNames={selectedContact?.id === contact.id ? "bg-muted":""} key={i} {...contact} onClick={() => onClick(contact)} />
+        <ContactItem
+          classNames={selectedContact?.id === contact.id ? "bg-muted" : ""}
+          key={i}
+          {...contact}
+          onClick={() => onClick(contact)}
+        />
       ))}
     </ScrollArea>
   );
 };
 
+export const ContactListDrawer = ({
+  contacts,
+  onClick,
+  loading,
+  selectedContact,
+}: ContactListProps) => {
+  return (
+    <Drawer>
+      <DrawerTrigger className="flex items-center space-x-2 font-semibold px-4 py-2"><BookUser/>  Contacts</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Your Contacts.</DrawerTitle>
+        </DrawerHeader>
+        <ContactList {...{ contacts, onClick, loading, selectedContact }} />
+        <DrawerFooter>
+          <DrawerClose>
+            <Button variant="outline">Close</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+};
 
 export function ContactsSkeleton() {
   return (
-    <div
-      className="flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer"
-    >
+    <div className="flex items-center gap-3 rounded-md p-2 hover:bg-muted cursor-pointer">
       <Skeleton className="h-10 w-10 border rounded-full" />
       <div className="space-y-2">
         <Skeleton className="h-4 w-[150px]" />
         <Skeleton className="h-4 w-[100px]" />
       </div>
     </div>
-  )
+  );
 }

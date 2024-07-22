@@ -4,6 +4,19 @@ import { useState, useEffect } from "react";
 
 export default function ConnectedDisplay() {
   const [isConnected, setIsConnected] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 640);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (socket.connected) {
@@ -34,7 +47,11 @@ export default function ConnectedDisplay() {
           isConnected ? "bg-green-500" : "bg-red-500"
         }`}
       />
-      <span className="text-sm font-medium">{isConnected ? "Connected" : "Disconnected"}</span>
+      {!isMobile && (
+        <span className="text-sm font-medium">
+          {isConnected ? "Connected" : "Disconnected"}
+        </span>
+      )}
     </div>
   );
 }

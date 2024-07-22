@@ -28,7 +28,7 @@ app.prepare().then(() => {
 
     // client sends message, server sends response
     socket.on("message", ({ conversationId, senderId, message }) => {
-      io.to(conversationId).emit("response", {message, id: senderId});
+      io.to(conversationId).emit("response", {message, senderId});
     })
 
     socket.on("disconnect", () => {

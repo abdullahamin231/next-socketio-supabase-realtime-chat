@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SendIcon, EllipsisVertical, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Contact } from "./ContactComponents";
-import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
 import {
   DropdownMenu,
@@ -17,7 +16,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchMessagesUseCase, sendMessageUseCase } from "./actions";
 
+interface Message {
+  content: string;
+  conversation_id: string;
+  created_at: string;
+  id: string;
+  sender_id: string;
+}
 export const MessageBox = ({
   contact,
   userData,
@@ -29,31 +36,60 @@ export const MessageBox = ({
   closeMessageBox: () => void;
   conversationId: string;
 }) => {
-  const supabase = createClient();
-
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<MessageItemProps[]>([]);
-  const [message, setMessage] = useState("");
-
-  const joinRoom = (roomId: string) => {
-    socket.emit("join_room", roomId);
-  };
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [message, setMessageText] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    joinRoom(conversationId as string);
+    setIsMobile(window.innerWidth < 640);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
+  useEffect(() => {
+    setMessages([]);
+    const getMessages = async () => {
+      setLoading(true);
+      const response = await fetchMessagesUseCase(conversationId);
+      setMessages(response as Message[]);
+      setLoading(false);
+    };
+    getMessages();
+  }, [conversationId]);
+
+  useEffect(() => {
+    const joinRoom = (roomId: string) => {
+      socket.emit("join_room", roomId);
+    };
+
+    joinRoom(conversationId as string);
+  }, [conversationId]);
 
   useEffect(() => {
     const handleResponse = ({
       message,
-      id,
+      senderId,
     }: {
       message: string;
-      id: string;
+      senderId: string;
     }) => {
-      setMessages((prevMessages: MessageItemProps[]) => [
+      // @ts-ignore
+      setMessages((prevMessages: Message[]) => [
         ...prevMessages,
-        { messageText: message, rightSide: id === userData.id },
+        {
+          content: message,
+          sender_id: senderId,
+          conversation_id: conversationId,
+          created_at: new Date().toISOString(),
+          id: `${new Date().getTime()}`,
+        }, // make sure to provide all necessary fields
       ]);
     };
 
@@ -62,12 +98,13 @@ export const MessageBox = ({
     return () => {
       socket.off("response", handleResponse);
     };
-  }, []);
+  }, [userData.id]);
 
   const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     socket.emit("message", { conversationId, message, senderId: userData.id });
-    setMessage("");
+    sendMessageUseCase(conversationId, message, userData.id);
+    setMessageText("");
   };
 
   if (loading) {
@@ -106,25 +143,30 @@ export const MessageBox = ({
       </div>
       <ScrollArea className="flex-1">
         <div className="grid gap-4 p-4 sm:p-6">
-          {messages.map((message, i) => (
-            <MessageItem
-              key={i}
-              messageText={message.messageText}
-              rightSide={message.rightSide}
-            />
-          ))}
+          {messages &&
+            messages.length > 0 &&
+            messages.map((message, i) => (
+              <MessageItem
+                key={i}
+                messageText={message.content}
+                rightSide={message.sender_id === userData.id}
+              />
+            ))}
         </div>
       </ScrollArea>
       <div className="border-t border-muted p-4 sm:p-6">
         <div className="flex w-full items-center space-x-2">
-          <form onSubmit={sendMessage}>
+          <form
+            className="w-full flex items-center space-x-2"
+            onSubmit={sendMessage}
+          >
             <Input
               id="message"
               placeholder="Type your message..."
               className="flex-1"
               autoComplete="off"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => setMessageText(e.target.value)}
             />
             <Button type="submit" size="icon">
               <SendIcon className="h-5 w-5" />
@@ -187,6 +229,9 @@ const SkeletonBox = () => {
       <ScrollArea className="flex-1">
         <div className="grid gap-4 p-4 sm:p-6">
           <Skeleton className="h-8 w-[65%]" />
+          <Skeleton className="ml-auto h-8 w-[65%]" />
+          <Skeleton className="h-8 w-[65%]" />
+          <Skeleton className="ml-auto h-8 w-[65%]" />
         </div>
       </ScrollArea>
       <div className="border-t border-muted p-4 sm:p-6">

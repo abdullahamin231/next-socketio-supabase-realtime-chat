@@ -31,7 +31,7 @@ export default async function Home() {
         </div>
         <div className="flex items-center gap-4">
           <ConnectedDisplay />
-          <EditProfile full_name={full_name![0].full_name} />
+          <EditProfile userId={data.user.id} full_name={full_name![0].full_name} />
           <ModeToggle />
           <SignOutButton />
         </div>

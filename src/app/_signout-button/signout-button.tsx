@@ -16,6 +16,7 @@ const SignOutButton = () => {
     setLoading(true);
     const response = await signOut();
     setLoading(false);
+    localStorage.removeItem("contacts");
     if (response.message === "You have been signed out successfully.") {
       router.push("/login");
     }
